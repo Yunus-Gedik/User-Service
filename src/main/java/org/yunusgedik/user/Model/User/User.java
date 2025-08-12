@@ -1,9 +1,10 @@
-package org.yunusgedik.user.Model;
+package org.yunusgedik.user.Model.User;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.yunusgedik.user.Model.UserStats.UserStats;
 
 import java.time.LocalDateTime;
 

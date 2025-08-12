@@ -1,6 +1,7 @@
-package org.yunusgedik.user.Model;
+package org.yunusgedik.user.Model.UserStats;
 
 import jakarta.persistence.*;
+import org.yunusgedik.user.Model.User.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
