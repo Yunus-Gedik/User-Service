@@ -22,6 +22,11 @@ public class UserController {
         return userService.get(id);
     }
 
+    @GetMapping
+    public User getUserByRequestParam(@RequestParam(name = "id") Long id) {
+        return userService.get(id);
+    }
+
     @GetMapping("/all")
     public List<User> getAllUsers() {
         return userService.getAll();
