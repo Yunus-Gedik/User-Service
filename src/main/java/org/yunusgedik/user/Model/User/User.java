@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name= "user")
+@Table(name= "appUser")
 public class User {
     @Id
     @GeneratedValue
@@ -33,6 +33,11 @@ public class User {
     public void prePersist() {
         createdAt = LocalDateTime.now();
         updatedAt = createdAt;
+
+        if (stats == null) {
+            stats = new UserStats();
+            stats.setUser(this);
+        }
     }
 
     @PreUpdate
