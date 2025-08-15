@@ -1,5 +1,6 @@
 package org.yunusgedik.user.Model.UserStats;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class UserStats {
     @OneToOne
     @MapsId
     @JoinColumn(name = "userId")
+    @JsonBackReference
     private User user;
 
     private Integer totalBookings = 0;
