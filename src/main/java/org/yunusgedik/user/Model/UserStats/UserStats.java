@@ -31,17 +31,18 @@ public class UserStats {
     private BigDecimal totalAmountSpent = BigDecimal.ZERO;
     private LocalDateTime lastBookingTime;
 
-    public void incrementConfirmedCount(Double price) {
+    public void confirm(Double price, LocalDateTime t) {
         totalBookings = (totalBookings == null ? 0 : totalBookings) + 1;
         totalAmountSpent = totalAmountSpent.add(BigDecimal.valueOf(price));
-        lastBookingTime = LocalDateTime.now();
+        lastBookingTime = t;
     }
 
-    public void incrementCanceledCount() {
+    public void cancel(Double price) {
         totalCancellations = (totalCancellations == null ? 0 : totalCancellations) + 1;
+        totalAmountSpent = totalAmountSpent.subtract(BigDecimal.valueOf(price));
     }
 
-    public void incrementWaitlistedCount() {
+    public void waitlist() {
         totalWaitlisted = (totalWaitlisted == null ? 0 : totalWaitlisted) + 1;
     }
 }

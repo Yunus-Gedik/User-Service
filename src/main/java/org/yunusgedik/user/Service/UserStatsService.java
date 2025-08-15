@@ -18,9 +18,9 @@ public class UserStatsService {
             .orElseThrow(() -> new RuntimeException("User not found"));
 
         switch (event.getStatus()) {
-            case CONFIRMED -> user.getStats().incrementConfirmedCount(event.getPrice());
-            case CANCELLED -> user.getStats().incrementCanceledCount();
-            case WAITLISTED -> user.getStats().incrementWaitlistedCount();
+            case CONFIRMED -> user.getStats().confirm(event.getPrice(), event.getTimestamp());
+            case CANCELLED -> user.getStats().cancel(event.getPrice());
+            case WAITLISTED -> user.getStats().waitlist();
         }
 
         userStatsRepository.save(user);
