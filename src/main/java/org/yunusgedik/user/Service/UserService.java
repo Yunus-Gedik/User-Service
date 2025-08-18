@@ -47,6 +47,9 @@ public class UserService {
         if (!isFilled(userDTO.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is required");
         }
+        if (!isFilled(userDTO.getPassword()) || userDTO.getPassword().length() < 6) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is required and must be at least 6 characters");
+        }
     }
 
     public User update(Long id, UserDTO userDTO) {
@@ -57,6 +60,15 @@ public class UserService {
         if (isFilled(userDTO.getLastName())) existingUser.setLastName(userDTO.getLastName());
         if (isFilled(userDTO.getEmail())) existingUser.setEmail(userDTO.getEmail());
         if (isFilled(userDTO.getPhoneNumber())) existingUser.setPhoneNumber(userDTO.getPhoneNumber());
+        if (isFilled(userDTO.getPassword())) {
+            if (userDTO.getPassword().length() < 6) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must be at least 6 characters");
+            }
+            existingUser.setPassword(userDTO.getPassword());
+        }
+        if (userDTO.getRoles() != null) {
+            existingUser.setRoles(userDTO.getRoles());
+        }
 
         return userRepository.save(existingUser);
     }
@@ -72,4 +84,17 @@ public class UserService {
     }
 
 
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    public User authenticate(String email, String password) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        if (!user.getPassword().equals(password)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
+        }
+        return user;
+    }
 }

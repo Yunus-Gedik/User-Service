@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.yunusgedik.user.Model.UserStats.UserStats;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -16,12 +17,21 @@ import java.time.LocalDateTime;
 @Table(name= "appUser")
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String firstName;
+
+    @Column(nullable = false)
     private String lastName;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private String password;
+
     private String phoneNumber;
 
     private LocalDateTime createdAt;
@@ -31,6 +41,11 @@ public class User {
     @JsonManagedReference
     private UserStats stats;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "userRoles", joinColumns = @JoinColumn(name = "userId"))
+    @Column(name = "role")
+    private Set<String> roles;
+
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
@@ -39,6 +54,10 @@ public class User {
         if (stats == null) {
             stats = new UserStats();
             stats.setUser(this);
+        }
+
+        if (roles == null || roles.isEmpty()) {
+            roles = Set.of("ROLE_USER"); // default role
         }
     }
 
