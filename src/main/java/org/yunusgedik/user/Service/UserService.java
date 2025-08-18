@@ -83,18 +83,8 @@ public class UserService {
         userRepository.delete(existingUser);
     }
 
-
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-    }
-
-    public User authenticate(String email, String password) {
-        User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        if (!user.getPassword().equals(password)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
-        }
-        return user;
     }
 }
