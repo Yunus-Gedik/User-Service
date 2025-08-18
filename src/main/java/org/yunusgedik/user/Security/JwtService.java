@@ -9,6 +9,8 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -31,5 +33,30 @@ public class JwtService {
             .addClaims(Map.of("roles", roles)) // add roles claim
             .signWith(keyProvider.getPrivateKey(), SignatureAlgorithm.RS256)
             .compact();
+    }
+
+    public Long extractUserId(String token) {
+        String subject = Jwts.parserBuilder()
+            .setSigningKey(keyProvider.getPublicKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody()
+            .getSubject();
+        return Long.parseLong(subject);
+    }
+
+    public Set<String> extractRoles(String token) {
+        Object rolesClaim = Jwts.parserBuilder()
+            .setSigningKey(keyProvider.getPublicKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody()
+            .get("roles");
+
+        List<?> rolesList = (List<?>) rolesClaim;
+        return rolesList.stream()
+            .filter(obj -> obj instanceof String)
+            .map(obj -> (String) obj)
+            .collect(Collectors.toSet());
     }
 }

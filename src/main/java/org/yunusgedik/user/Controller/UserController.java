@@ -1,6 +1,7 @@
 package org.yunusgedik.user.Controller;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.yunusgedik.user.Model.User.User;
 import org.yunusgedik.user.Model.User.UserDTO;
 import org.yunusgedik.user.Service.UserService;
@@ -18,31 +19,37 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal")
     public User getUser(@PathVariable Long id) {
         return userService.get(id);
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or #id == principal")
     public User getUserByRequestParam(@RequestParam(name = "id") Long id) {
         return userService.get(id);
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAllUsers() {
         return userService.getAll();
     }
 
     @PostMapping("/new")
+    @PreAuthorize("hasRole('ADMIN')")
     public User createUser(@RequestBody UserDTO userDTO) {
         return userService.create(userDTO);
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal")
     public User updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
         return userService.update(id, userDTO);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal")
     public void deleteUser(@PathVariable Long id) {
         userService.delete(id);
     }
