@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Set;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -38,24 +39,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring("Bearer ".length());
 
-        try {
-            Long userId = jwtService.extractUserId(token);
-            var roles = jwtService.extractRoles(token);
 
-            if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                        userId,
-                        null,
-                        roles.stream()
-                             .map(SimpleGrantedAuthority::new)
-                             .toList()
-                    );
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        Long userId = jwtService.extractUserId(token);
+        Set<String> roles = jwtService.extractRoles(token);
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        } catch (Exception ignored) {}
+        if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                    userId,
+                    null,
+                    roles.stream()
+                         .map(SimpleGrantedAuthority::new)
+                         .toList()
+                );
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
 
         filterChain.doFilter(request, response);
     }
