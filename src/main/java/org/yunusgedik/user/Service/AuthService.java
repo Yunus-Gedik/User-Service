@@ -6,6 +6,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.yunusgedik.user.Model.User.User;
 import org.yunusgedik.user.Model.User.UserDTO;
 import org.yunusgedik.user.Security.JwtService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Map;
 
@@ -14,6 +16,7 @@ public class AuthService {
 
     private final UserService userService;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public AuthService(UserService userService, JwtService jwtService) {
         this.userService = userService;
@@ -23,7 +26,7 @@ public class AuthService {
     public Map<String, String> login(String email, String password) {
         User user = userService.getByEmail(email);
 
-        if (!user.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 

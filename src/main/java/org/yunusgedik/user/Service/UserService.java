@@ -2,6 +2,8 @@ package org.yunusgedik.user.Service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.yunusgedik.user.Model.User.User;
@@ -14,6 +16,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UserService(UserRepository userRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
@@ -34,6 +37,8 @@ public class UserService {
 
         User user = new User();
         modelMapper.map(userDTO, user);
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
         return userRepository.save(user);
     }
 
