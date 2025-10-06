@@ -1,5 +1,8 @@
 package org.yunusgedik.user.Controller;
 
+import org.apache.coyote.BadRequestException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +30,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public Map<String,String> register(@RequestBody UserDTO userDTO) {
+    public Map<String,String> register(@RequestBody UserDTO userDTO) throws BadRequestException {
         if(JwtService.isCurrentUserAdmin() == false && 
             (userDTO.getRoles() != null && 
             userDTO.getRoles().isEmpty() == false)
         ) {
-            throw new RuntimeException("Only admins can assign roles during registration.");
+            throw new BadRequestException("Only admins can assign roles during registration.");
         }
 
         return authService.register(userDTO);
