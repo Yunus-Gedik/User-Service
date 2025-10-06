@@ -3,6 +3,8 @@ package org.yunusgedik.user.Security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -59,4 +61,12 @@ public class JwtService {
             .map(obj -> (String) obj)
             .collect(Collectors.toSet());
     }
+
+    public static boolean isCurrentUserAdmin() {    
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth.getAuthorities().stream()
+                            .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+        return isAdmin;
+    }
+
 }
